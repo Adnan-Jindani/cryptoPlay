@@ -37,8 +37,8 @@ mydb = mysql.connector.connect(
 
 #preparing credentials and logging into firebase databse to set and get the data
 
-cred_obj = firebase_admin.credentials.Certificate('strict-todo-firebase-adminsdk-zmgtw-9b2375558d.json')
-default_app = firebase_admin.initialize_app(cred_obj, {'databaseURL':"https://strict-todo-default-rtdb.firebaseio.com/", 'storageBucket': 'strict-todo.appspot.com'})
+cred_obj = firebase_admin.credentials.Certificate('virtual-crypto-1cfa5-firebase-adminsdk-uwgpx-e9d125f3d5.json')
+default_app = firebase_admin.initialize_app(cred_obj, {'databaseURL':"https://virtual-crypto-1cfa5-default-rtdb.firebaseio.com/"})
 
 global ref
 ref = db.reference("/")
@@ -255,7 +255,7 @@ def verifyEmail():
         mycursor = mydb.cursor()
 
         sql = "INSERT INTO balances (username, balance) VALUES (%s, %s)"
-        val = (session["createEmail"], 100)
+        val = (session["createEmail"], 10000000)
 
         mycursor.execute(sql, val)
 
