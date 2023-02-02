@@ -139,6 +139,16 @@ button.colored{
   border: none;
 }
 
+button.buy{
+  background-color: green;
+  border: none;
+}
+
+button.sell{
+  background-color: red;
+  border: none;
+}
+
 button.colored:hover{
   filter: brightness(150%);
 }
