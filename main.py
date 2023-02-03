@@ -289,6 +289,33 @@ def buy(id):
 
   return render_template("buy.html", coinInit=coinInit, vcoins=session["vcoins"], url_for=url_for, coinPrice=coinPrice, coinName=coinName, coinId=coinId, balance=balance)
 
+@app.route('/sell/<id>', methods = ["GET", "POST"])
+def sell(id):
+  mycursor = mydb.cursor()
+  sql = "SELECT * from coins where id = " + id
+  mycursor.execute(sql)
+  coin = mycursor.fetchone()
+
+  coinName = coin[1]
+  coinPrice = getCoinPrice(coinName)
+  coinInit = coin[2]
+  coinId = coin[0]
+
+  mycursor = mydb.cursor()
+  sql = "SELECT * from holdings where username = '" + session["email"] + "' and coin_id = " + str(coinId)
+  mycursor.execute(sql)
+  coinBal = mycursor.fetchone()
+
+  # Try to get the coin balance, if it doesn't exist, set it to 0
+
+  try:
+    coinBal = coinBal[3]
+    coinBal = float(coinBal)
+  except:
+    coinBal = 0
+
+  return render_template("sell.html", coinInit=coinInit, vcoins=session["vcoins"], url_for=url_for, coinPrice=coinPrice, coinName=coinName, coinId=coinId, coinBal=coinBal)
+
 def getCoinPrice(coinName):
   
   cg_client = CoinGeckoAPI()
@@ -328,11 +355,48 @@ def buyOrder(id, inrVal):
 
     session["coinAmt"] = float(inrVal)/getCoinPriceFromId(id)
 
-    sql = "insert into holdings (holding_id, username, coin_id, coin_amount) Values (default, '"+ session["email"] +"', "+ id +", "+ str(session["coinAmt"]) +")"
+    mycursor = mydb.cursor()
+    sql = "select * from holdings where username = '"+ session["email"] +"' and coin_id = "+ id
+    mycursor.execute(sql)
+    result = mycursor.fetchall()
+
+    if len(result) <= 0:
+
+      sql = "insert into holdings (holding_id, username, coin_id, coin_amount) Values (default, '"+ session["email"] +"', "+ id +", "+ str(session["coinAmt"]) +")"
+      mycursor.execute(sql)
+      mydb.commit()
+
+    else:
+
+      sql = "update holdings set coin_amount = coin_amount + "+ str(session["coinAmt"]) +" where username = '"+ session["email"] +"' and coin_id = "+ id
+      mycursor.execute(sql)
+      mydb.commit()
+
+    return redirect("/buy/" + id + "#successModal")
+
+@app.route('/sellOrder/<id>/<coinAmt>', methods = ["GET", "POST"])
+def sellOrder(id, coinAmt):
+
+  session["coinBal"] = getCoinHoldings(session["email"], id)
+
+  if float(coinAmt) > session["coinBal"]:
+    return redirect("/sell/" + id + "#insufficientFundsModal")
+
+  else:
+
+    session["coinVal"] = getCoinPriceFromId(id) * float(coinAmt)
+
+    mycursor = mydb.cursor()
+    sql = "update balances set balance = balance + "+ str(session["coinVal"]) +" where username = '"+ session["email"] +"'"
+
     mycursor.execute(sql)
     mydb.commit()
 
-    return redirect("/buy/" + id + "#successModal")
+    sql = "update holdings set coin_amount = coin_amount - "+ coinAmt +" where username = '"+ session["email"] +"' and coin_id = "+ id
+    mycursor.execute(sql)
+    mydb.commit()
+
+    return redirect("/sell/" + id + "#successModal")
 
 def getUserBalance(username):
   mycursor = mydb.cursor()
@@ -341,6 +405,19 @@ def getUserBalance(username):
   balance = mycursor.fetchone()
 
   return balance[2]
+
+def getCoinHoldings(username, coinId):
+  mycursor = mydb.cursor()
+  sql = "SELECT * from holdings where username = '" + username + "' and coin_id = " + str(coinId)
+  mycursor.execute(sql)
+  holdings = mycursor.fetchone()
+
+  #Adding try catch to handle the case when the user has no holdings of the coin
+  
+  try:
+    return holdings[3]
+  except:
+    return 0
   
 
 #running the app on server
