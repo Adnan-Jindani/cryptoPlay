@@ -8,6 +8,7 @@ import mysql.connector
 from jproperties import Properties
 from flask_session import Session
 import smtplib
+from pycoingecko import CoinGeckoAPI
 
 # Configure the properties file to get the DB credentials
 
@@ -266,6 +267,81 @@ def verifyEmail():
         return redirect("/verifyEmail#incorrectPinModal")
 
   return render_template("verifyEmail.html")
+
+@app.route('/buy/<id>', methods = ["GET", "POST"])
+def buy(id):
+  mycursor = mydb.cursor()
+  sql = "SELECT * from coins where id = " + id
+  mycursor.execute(sql)
+  coin = mycursor.fetchone()
+
+  coinName = coin[1]
+  coinPrice = getCoinPrice(coinName)
+  coinInit = coin[2]
+  coinId = coin[0]
+
+  mycursor = mydb.cursor()
+  sql = "SELECT * from balances where username = '" + session["email"] + "'"
+  mycursor.execute(sql)
+  balance = mycursor.fetchone()
+
+  balance = balance[2]
+
+  return render_template("buy.html", coinInit=coinInit, vcoins=session["vcoins"], url_for=url_for, coinPrice=coinPrice, coinName=coinName, coinId=coinId, balance=balance)
+
+def getCoinPrice(coinName):
+  
+  cg_client = CoinGeckoAPI()
+  price = cg_client.get_price(ids = coinName, vs_currencies = "inr")
+  
+  return price[coinName.lower()]["inr"]
+
+def getCoinPriceFromId(coinId):
+
+  mycursor = mydb.cursor()
+  sql = "SELECT * from coins where id = " + str(coinId)
+  mycursor.execute(sql)
+  coin = mycursor.fetchone()
+
+  coinName = coin[1]
+  
+  cg_client = CoinGeckoAPI()
+  price = cg_client.get_price(ids = coinName, vs_currencies = "inr")
+  
+  return price[coinName.lower()]["inr"]
+
+@app.route('/buyOrder/<id>/<inrVal>', methods = ["GET", "POST"])
+def buyOrder(id, inrVal):
+
+  session["balance"] = getUserBalance(session["email"])
+
+  if float(inrVal) > session["balance"]:
+    return redirect("/buy/" + id + "#insufficientFundsModal")
+
+  else:
+
+    mycursor = mydb.cursor()
+    sql = "update balances set balance = balance - "+ inrVal +" where username = '"+ session["email"] +"'"
+
+    mycursor.execute(sql)
+    mydb.commit()
+
+    session["coinAmt"] = float(inrVal)/getCoinPriceFromId(id)
+
+    sql = "insert into holdings (holding_id, username, coin_id, coin_amount) Values (default, '"+ session["email"] +"', "+ id +", "+ str(session["coinAmt"]) +")"
+    mycursor.execute(sql)
+    mydb.commit()
+
+    return redirect("/buy/" + id + "#successModal")
+
+def getUserBalance(username):
+  mycursor = mydb.cursor()
+  sql = "SELECT * from balances where username = '" + username + "'"
+  mycursor.execute(sql)
+  balance = mycursor.fetchone()
+
+  return balance[2]
+  
 
 #running the app on server
 app.run(host='0.0.0.0')
