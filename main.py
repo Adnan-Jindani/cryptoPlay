@@ -226,7 +226,7 @@ def verifyEmail():
     session["pin"] = generatePin()
 
     try:
-      s.sendmail(smtpEmail, session["createEmail"], "Subject: Email Verification pin for Todofy \n\n Your Todofy pin is: " + str(session["pin"]) + "\n\n If you did not request this pin, please ignore this email. \n\n Thank you for using Todofy! \n\n - Todofy Team \n\n Visit Todofy at https://todofy.live/")
+      s.sendmail(smtpEmail, session["createEmail"], "Subject: Email Verification pin for Virtual Crypto \n\n Your Virtual Crypto pin is: " + str(session["pin"]) + "\n\n If you did not request this pin, please ignore this email. \n\n Thank you for using Virtual Crypto! \n\n - Virtual Crypto Team \n\n Visit Virtual Crypto at https://todofylive/")
     
     except:
       #Logging into SMTP for emailing
@@ -235,7 +235,7 @@ def verifyEmail():
       s.starttls()
       s.login(smtpEmail, smtpPassword)
 
-      s.sendmail(smtpEmail, session["createEmail"], "Subject: Email Verification pin for Todofy \n\n Your Todofy pin is: " + str(session["pin"]) + "\n\n If you did not request this pin, please ignore this email. \n\n Thank you for using Todofy! \n\n - Todofy Team \n\n Visit Todofy at https://todofy.live/")
+      s.sendmail(smtpEmail, session["createEmail"], "Subject: Email Verification pin for Virtual Crypto \n\n Your Virtual Crypto pin is: " + str(session["pin"]) + "\n\n If you did not request this pin, please ignore this email. \n\n Thank you for using Virtual Crypto! \n\n - Virtual Crypto Team \n\n Visit Virtual Crypto at https://todofylive/")
 
     session["emailFlag"] = 0
   
@@ -376,7 +376,7 @@ def buyOrder(id, inrVal):
     sql = "insert into transactions (transaction_id, username, value, coin_id, coin_amount, transaction_type) Values (default, '"+ session["email"] +"', "+ inrVal +", "+ id +", "+ str(session["coinAmt"]) +", 'buy')"
     mycursor.execute(sql)
     mydb.commit()
-    
+
     return redirect("/buy/" + id + "#successModal")
 
 @app.route('/sellOrder/<id>/<coinAmt>', methods = ["GET", "POST"])
