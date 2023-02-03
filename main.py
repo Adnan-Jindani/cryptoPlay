@@ -144,7 +144,7 @@ def user():
 
   body=""
   for k in tasks:
-    body += "<div class='card'> <h3>"+ k[1]+" ("+ k[2] +") </h3> <a href=/buy/"+ str(k[0]) +"> <button class='buy'> Buy </button> </a> <a href=/sell/"+ str(k[0]) +"> <button class='sell'> Sell </button> </a> </div> <br> <br>"  
+    body += "<div class='card'> <img src='"+ k[3] +"'> <h3>"+ k[1]+" ("+ k[2] +") </h3> <a href=/buy/"+ str(k[0]) +"> <button class='buy'> Buy </button> </a> <a href=/sell/"+ str(k[0]) +"> <button class='sell'> Sell </button> </a> </div> <br> <br>"  
 
   return render_template("user.html", vcoins = session["vcoins"], tasks=tasks, body=body, profileSeed=session["email"].split("@")[0])
 
