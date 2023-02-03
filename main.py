@@ -372,6 +372,11 @@ def buyOrder(id, inrVal):
       mycursor.execute(sql)
       mydb.commit()
 
+    mycursor = mydb.cursor()
+    sql = "insert into transactions (transaction_id, username, value, coin_id, coin_amount, transaction_type) Values (default, '"+ session["email"] +"', "+ inrVal +", "+ id +", "+ str(session["coinAmt"]) +", 'buy')"
+    mycursor.execute(sql)
+    mydb.commit()
+    
     return redirect("/buy/" + id + "#successModal")
 
 @app.route('/sellOrder/<id>/<coinAmt>', methods = ["GET", "POST"])
@@ -393,6 +398,11 @@ def sellOrder(id, coinAmt):
     mydb.commit()
 
     sql = "update holdings set coin_amount = coin_amount - "+ coinAmt +" where username = '"+ session["email"] +"' and coin_id = "+ id
+    mycursor.execute(sql)
+    mydb.commit()
+
+    mycursor = mydb.cursor()
+    sql = "insert into transactions (transaction_id, username, value, coin_id, coin_amount, transaction_type) Values (default, '"+ session["email"] +"', "+ str(session["coinVal"]) +", "+ id +", "+ coinAmt +", 'sell')"
     mycursor.execute(sql)
     mydb.commit()
 
