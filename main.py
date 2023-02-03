@@ -148,6 +148,32 @@ def user():
 
   return render_template("user.html", vcoins = session["vcoins"], tasks=tasks, body=body, profileSeed=session["email"].split("@")[0])
 
+
+@app.route('/myHoldings', methods = ["GET", "POST"])
+def myHoldings():
+  mydb = mysql.connector.connect(
+                host=dbHost,
+                user=dbUser,
+                password=dbPassword,
+                database=dbSchema)
+
+  mycursor = mydb.cursor()
+
+  sql = "SELECT * \
+         FROM holdings\
+         JOIN coins\
+         ON holdings.coin_id = coins.id\
+        WHERE holdings.username = " + "'" + session["email"] + "'"
+
+  mycursor.execute(sql)
+  tasks = mycursor.fetchall()
+
+  body=""
+  for k in tasks:
+    body += "<div class='card'> <img src='"+ k[7] +"'> <h3>"+ k[5]+" ("+ k[6] +") </h3> <h4>Total Value(INR):- ₹"+ str(float(k[3])*getCoinPriceFromId(k[4])) +"</h4> <a href=/buy/"+ str(k[4]) +"> <button class='buy'> Buy More </button> </a> <a href=/sell/"+ str(k[4]) +"> <button class='sell'> Sell </button> </a> </div> <br> <br>"  
+
+  return render_template("myHoldings.html", vcoins = session["vcoins"], tasks=tasks, body=body, profileSeed=session["email"].split("@")[0])
+
 # This function is to log out the user
 
 @app.route('/logout', methods = ["GET", "POST"])
