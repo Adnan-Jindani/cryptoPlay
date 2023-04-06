@@ -8,7 +8,8 @@ import mysql.connector
 from jproperties import Properties
 from flask_session import Session
 import smtplib
-from pycoingecko import CoinGeckoAPI
+import requests
+from bs4 import BeautifulSoup
 
 # Configure the properties file to get the DB credentials
 
@@ -170,7 +171,7 @@ def myHoldings():
 
   body=""
   for k in tasks:
-    body += "<div class='card'> <img src='"+ k[7] +"'> <h3>"+ k[5]+" ("+ k[6] +") </h3> <h4>Total Value(INR):- ₹"+ str(float(k[3])*getCoinPriceFromId(k[4])) +"</h4> <a href=/buy/"+ str(k[4]) +"> <button class='buy'> Buy More </button> </a> <a href=/sell/"+ str(k[4]) +"> <button class='sell'> Sell </button> </a> </div> <br> <br>"  
+    body += "<div class='card'> <img src='"+ k[7] +"'> <h3>"+ k[5]+" ("+ k[6] +") </h3> <h4>Total Value(INR):- "+ str(round(float(k[3]), 2)*getCoinPriceFromId(k[4])) +"</h4> <a href=/buy/"+ str(k[4]) +"> <button class='buy'> Buy More </button> </a> <a href=/sell/"+ str(k[4]) +"> <button class='sell'> Sell </button> </a> </div> <br> <br>"  
 
   return render_template("myHoldings.html", vcoins = session["vcoins"], tasks=tasks, body=body, profileSeed=session["email"].split("@")[0])
 
@@ -343,11 +344,21 @@ def sell(id):
   return render_template("sell.html", coinInit=coinInit, vcoins=session["vcoins"], url_for=url_for, coinPrice=coinPrice, coinName=coinName, coinId=coinId, coinBal=coinBal)
 
 def getCoinPrice(coinName):
+
+  url = "https://www.coingecko.com/en/coins/"+ coinName.lower() +"/inr"
+
+  response = requests.get(url)
+  soup = BeautifulSoup(response.content, "html.parser")
+
+  price = soup.find("span", class_="no-wrap").get_text()
+
+  price = price.replace(",", "")
+  price = price.replace("₹", "")
   
-  cg_client = CoinGeckoAPI()
-  price = cg_client.get_price(ids = coinName, vs_currencies = "inr")
-  
-  return price[coinName.lower()]["inr"]
+  price = float(price)
+  price = round(price, 2)
+
+  return price
 
 def getCoinPriceFromId(coinId):
 
@@ -357,11 +368,21 @@ def getCoinPriceFromId(coinId):
   coin = mycursor.fetchone()
 
   coinName = coin[1]
-  
-  cg_client = CoinGeckoAPI()
-  price = cg_client.get_price(ids = coinName, vs_currencies = "inr")
-  
-  return price[coinName.lower()]["inr"]
+
+  url = "https://www.coingecko.com/en/coins/"+ coinName.lower() +"/inr"
+
+  response = requests.get(url)
+  soup = BeautifulSoup(response.content, "html.parser")
+
+  price = soup.find("span", class_="no-wrap").get_text()
+
+  price = price.replace(",", "")
+  price = price.replace("₹", "")
+
+  price = float(price)
+  price = round(price, 2)
+
+  return price
 
 @app.route('/buyOrder/<id>/<inrVal>', methods = ["GET", "POST"])
 def buyOrder(id, inrVal):
