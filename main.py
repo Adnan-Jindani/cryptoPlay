@@ -481,4 +481,4 @@ def getCoinHoldings(username, coinId):
   
 
 #running the app on server
-app.run(host='0.0.0.0', port='443', ssl_context=('ssl.pem', 'private.key'))
+app.run(host='0.0.0.0')
