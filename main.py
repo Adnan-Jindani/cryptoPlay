@@ -173,7 +173,7 @@ def myHoldings():
 
   body=""
   for k in tasks:
-    session["netWorth"] = session["netWorth"] + float(k[3])*getCoinPriceFromId(k[4])
+    session["netWorth"] = session["netWorth"] + float(k[3])*getCoinPriceFromId(k[4]) + session["vcoins"]
     body += "<div class='card'> <img src='"+ k[7] +"'> <h3>"+ k[5]+" ("+ k[6] +") </h3> <h4>Total Value(INR):- "+ str(round(float(k[3]), 2)*getCoinPriceFromId(k[4])) +"</h4> <a href=/buy/"+ str(k[4]) +"> <button class='buy'> Buy More </button> </a> <a href=/sell/"+ str(k[4]) +"> <button class='sell'> Sell </button> </a> </div> <br> <br>"  
 
   return render_template("myHoldings.html", vcoins = session["vcoins"], tasks=tasks, body=body, profileSeed=session["email"].split("@")[0], netWorth=round(session["netWorth"], 2))
