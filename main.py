@@ -10,6 +10,7 @@ from flask_session import Session
 import smtplib
 import requests
 from bs4 import BeautifulSoup
+import mysql.connector.pooling
 
 # Configure the properties file to get the DB credentials
 
@@ -152,13 +153,17 @@ def user():
 
 @app.route('/myHoldings', methods = ["GET", "POST"])
 def myHoldings():
-  mydb = mysql.connector.connect(
-                host=dbHost,
-                user=dbUser,
-                password=dbPassword,
-                database=dbSchema)
+  mydb = mysql.connector.pooling.MySQLConnectionPool(
+    pool_name="mypool",
+    pool_size=5,
+    host=dbHost,
+    user=dbUser,
+    password=dbPassword,
+    database=dbSchema
+)
 
-  mycursor = mydb.cursor()
+  cnx = mydb.get_connection()
+  mycursor = cnx.cursor()
 
   sql = "SELECT * \
          FROM holdings\
@@ -168,6 +173,10 @@ def myHoldings():
 
   mycursor.execute(sql)
   tasks = mycursor.fetchall()
+
+  mycursor.close()
+  cnx.close()
+
 
   session["netWorth"] = 0
 
