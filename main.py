@@ -121,12 +121,7 @@ def index():
 
   # This funtion is for the user
 
-def user():
-  mydb = mysql.connector.connect(
-                host=dbHost,
-                user=dbUser,
-                password=dbPassword,
-                database=dbSchema)
+def user(): 
 
   mycursor = mydb.cursor()
   sql = "SELECT balance from balances where username = " + "'" + session["email"] + "'"
@@ -151,12 +146,7 @@ def user():
 
 
 @app.route('/myHoldings', methods = ["GET", "POST"])
-def myHoldings():
-  mydb = mysql.connector.connect(
-                host=dbHost,
-                user=dbUser,
-                password=dbPassword,
-                database=dbSchema)
+def myHoldings(): 
 
   mycursor = mydb.cursor()
 
@@ -276,13 +266,7 @@ def verifyEmail():
    
       if pin == str(session["pin"]):
         ref.child("Users/" + session["firebaseCreateEmail"]).set(session["createPassword"])
-
-        mydb = mysql.connector.connect(
-            host=dbHost,
-            user=dbUser,
-            password=dbPassword,
-            database=dbSchema)
-
+        
         mycursor = mydb.cursor()
 
         sql = "INSERT INTO balances (username, balance) VALUES (%s, %s)"
