@@ -279,7 +279,7 @@ def verifyEmail():
         mycursor = conn.cursor()
 
         sql = "INSERT INTO balances (username, balance) VALUES (%s, %s)"
-        val = (session["createEmail"], 10000000)
+        val = (session["createEmail"], 1000000)
 
         mycursor.execute(sql, val)
 
