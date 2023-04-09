@@ -33,7 +33,7 @@ global mydb, conn, mycursor
 
 mydb = pooling.MySQLConnectionPool(
         pool_name="my_pool",
-        pool_size=32,
+        pool_size=5,
         host=dbHost,
         user=dbUser,
         password=dbPassword,
@@ -130,7 +130,6 @@ def index():
 
 def user(): 
 
-  conn = mydb.get_connection()
   mycursor = conn.cursor()
   sql = "SELECT balance from balances where username = " + "'" + session["email"] + "'"
   mycursor.execute(sql)
@@ -140,14 +139,11 @@ def user():
   except:
     session["vcoins"] = 0
 
-  conn = mydb.get_connection()
   mycursor = conn.cursor()
 
   sql = "SELECT * from coins"
   mycursor.execute(sql)
   tasks = mycursor.fetchall()
-  mycursor.close()
-  conn.close()
 
   body=""
   for k in tasks:
@@ -159,7 +155,6 @@ def user():
 @app.route('/myHoldings', methods = ["GET", "POST"])
 def myHoldings(): 
 
-  conn = mydb.get_connection()
   mycursor = conn.cursor()
 
   sql = "SELECT * \
@@ -170,8 +165,6 @@ def myHoldings():
 
   mycursor.execute(sql)
   tasks = mycursor.fetchall()
-  mycursor.close()
-  conn.close()
 
   session["netWorth"] = 0
 
@@ -286,14 +279,9 @@ def verifyEmail():
         sql = "INSERT INTO balances (username, balance) VALUES (%s, %s)"
         val = (session["createEmail"], 10000000)
 
-        conn = mydb.get_connection()
-        mycursor = conn.cursor()
-
         mycursor.execute(sql, val)
 
         conn.commit()
-        conn.close()
-        mycursor.close()
 
         return redirect("signup#accountCreatedModal")
       else:
@@ -368,7 +356,6 @@ def getCoinPrice(coinName):
 
 def getCoinPriceFromId(coinId):
 
-  conn = mydb.get_connection()
   mycursor = conn.cursor()
   sql = "SELECT * from coins where id = " + str(coinId)
   mycursor.execute(sql)
@@ -400,53 +387,36 @@ def buyOrder(id, inrVal):
     return redirect("/buy/" + id + "#insufficientFundsModal")
 
   else:
+
+    mycursor = conn.cursor()
     sql = "update balances set balance = balance - "+ inrVal +" where username = '"+ session["email"] +"'"
 
-    conn = mydb.get_connection()
-    mycursor = conn.cursor()
     mycursor.execute(sql)
     conn.commit()
-    conn.close()
-    mycursor.close()
 
     session["coinAmt"] = float(inrVal)/getCoinPriceFromId(id)
 
-
-    sql = "select * from holdings where username = '"+ session["email"] +"' and coin_id = "+ id
-    conn = mydb.get_connection()
     mycursor = conn.cursor()
+    sql = "select * from holdings where username = '"+ session["email"] +"' and coin_id = "+ id
     mycursor.execute(sql)
     result = mycursor.fetchall()
-    mycursor.close()
-    conn.close()
 
     if len(result) <= 0:
 
       sql = "insert into holdings (holding_id, username, coin_id, coin_amount) Values (default, '"+ session["email"] +"', "+ id +", "+ str(session["coinAmt"]) +")"
-      conn = mydb.get_connection()
-      mycursor = conn.cursor()
       mycursor.execute(sql)
       conn.commit()
-      conn.close()
-      mycursor.close()
 
     else:
 
       sql = "update holdings set coin_amount = coin_amount + "+ str(session["coinAmt"]) +" where username = '"+ session["email"] +"' and coin_id = "+ id
-      conn = mydb.get_connection()
-      mycursor = conn.cursor()
       mycursor.execute(sql)
       conn.commit()
-    conn.close()
-    mycursor.close()
 
-    sql = "insert into transactions (transaction_id, username, value, coin_id, coin_amount, transaction_type) Values (default, '"+ session["email"] +"', "+ inrVal +", "+ id +", "+ str(session["coinAmt"]) +", 'buy')"
-    conn = mydb.get_connection()
     mycursor = conn.cursor()
+    sql = "insert into transactions (transaction_id, username, value, coin_id, coin_amount, transaction_type) Values (default, '"+ session["email"] +"', "+ inrVal +", "+ id +", "+ str(session["coinAmt"]) +", 'buy')"
     mycursor.execute(sql)
     conn.commit()
-    conn.close()
-    mycursor.close()
 
     return redirect("/buy/" + id + "#successModal")
 
@@ -462,35 +432,24 @@ def sellOrder(id, coinAmt):
 
     session["coinVal"] = getCoinPriceFromId(id) * float(coinAmt)
 
+    mycursor = conn.cursor()
     sql = "update balances set balance = balance + "+ str(session["coinVal"]) +" where username = '"+ session["email"] +"'"
 
-    conn = mydb.get_connection()
-    mycursor = conn.cursor()
     mycursor.execute(sql)
     conn.commit()
-    conn.close()
-    mycursor.close()
 
     sql = "update holdings set coin_amount = coin_amount - "+ coinAmt +" where username = '"+ session["email"] +"' and coin_id = "+ id
-    conn = mydb.get_connection()
-    mycursor = conn.cursor()
     mycursor.execute(sql)
     conn.commit()
-    conn.close()
-    mycursor.close()
 
-    sql = "insert into transactions (transaction_id, username, value, coin_id, coin_amount, transaction_type) Values (default, '"+ session["email"] +"', "+ str(session["coinVal"]) +", "+ id +", "+ coinAmt +", 'sell')"
-    conn = mydb.get_connection()
     mycursor = conn.cursor()
+    sql = "insert into transactions (transaction_id, username, value, coin_id, coin_amount, transaction_type) Values (default, '"+ session["email"] +"', "+ str(session["coinVal"]) +", "+ id +", "+ coinAmt +", 'sell')"
     mycursor.execute(sql)
     conn.commit()
-    conn.close()
-    mycursor.close()
 
     return redirect("/sell/" + id + "#successModal")
 
 def getUserBalance(username):
-  conn = mydb.get_connection()
   mycursor = conn.cursor()
   sql = "SELECT * from balances where username = '" + username + "'"
   mycursor.execute(sql)
@@ -499,7 +458,6 @@ def getUserBalance(username):
   return balance[2]
 
 def getCoinHoldings(username, coinId):
-  conn = mydb.get_connection()
   mycursor = conn.cursor()
   sql = "SELECT * from holdings where username = '" + username + "' and coin_id = " + str(coinId)
   mycursor.execute(sql)
