@@ -33,7 +33,7 @@ global mydb, conn, mycursor
 
 mydb = pooling.MySQLConnectionPool(
         pool_name="my_pool",
-        pool_size=5,
+        pool_size=32,
         host=dbHost,
         user=dbUser,
         password=dbPassword,
