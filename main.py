@@ -494,7 +494,6 @@ def transactions():
 
   return render_template("transactions.html", transactions=transactions, body=body)
 
-@cache.cached(timeout=30000)
 def getCoinNameFromId(coinId):
   mycursor = conn.cursor()
   sql = "SELECT * from coins where id = " + str(coinId)
