@@ -479,7 +479,7 @@ def getCoinHoldings(username, coinId):
 @app.route('/transactions')
 def transactions():
   mycursor = conn.cursor()
-  sql = "SELECT * from transactions where username = '" + session["email"] + "'"
+  sql = "SELECT * FROM transactions WHERE username = '" + session["email"] + "' ORDER BY transaction_id DESC LIMIT 10"
   mycursor.execute(sql)
   transactions = mycursor.fetchall()
 
