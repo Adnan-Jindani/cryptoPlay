@@ -83,6 +83,7 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
+@cache.cached(timeout=300)
 @app.route('/', methods = ["GET", "POST"])
 def index():
 
@@ -154,6 +155,7 @@ def user():
   return render_template("user.html", vcoins = session["vcoins"], tasks=tasks, body=body, profileSeed=session["email"].split("@")[0])
 
 
+@cache.cached(timeout=300)
 @app.route('/myHoldings', methods = ["GET", "POST"])
 def myHoldings(): 
 
@@ -473,6 +475,33 @@ def getCoinHoldings(username, coinId):
     return holdings[3]
   except:
     return 0
+  
+@app.route('/transactions')
+def transactions():
+  mycursor = conn.cursor()
+  sql = "SELECT * from transactions where username = '" + session["email"] + "'"
+  mycursor.execute(sql)
+  transactions = mycursor.fetchall()
+
+  body = ""
+
+  for transaction in transactions:
+    coin = getCoinNameFromId(transaction[3])
+    if transaction[5] == "buy":
+      body += "<div class='card' style='color:green'> <h3> You bought " + str(transaction[4]) + " " + coin + " for ₹" + str(transaction[2]) + " </h3> </div> <br><br>"
+    else:
+      body += "<div class='card' style='color:red'> <h3> You sold " + str(transaction[4]) + " " + coin + " for ₹" + str(transaction[2]) + " </h3> </div> <br><br>"
+
+  return render_template("transactions.html", transactions=transactions, body=body)
+
+@cache.cached(timeout=30000)
+def getCoinNameFromId(coinId):
+  mycursor = conn.cursor()
+  sql = "SELECT * from coins where id = " + str(coinId)
+  mycursor.execute(sql)
+  coin = mycursor.fetchone()
+
+  return coin[1]
   
 
 #running the app on server

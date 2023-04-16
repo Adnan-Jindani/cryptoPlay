@@ -7,7 +7,7 @@
     <meta charset="utf-8">
     <meta name="keywords" content="">
     <meta name="description" content="">
-    <title>Virtual Trading</title>
+    <title>Transactions</title>
     <link rel="icon" type="image/x-icon" href="/static/favicon.png">
     <link rel="stylesheet" href="static/nicepage.css" media="screen">
 <link rel="stylesheet" href="static/Home-1.css" media="screen">
@@ -34,21 +34,18 @@
         <nav>
           <img src="static/favicon.png" alt="logo" width="50" height="50" style="outline: 0px;">
           <h3 class="GeneratedText">Virtual Crypto</h3>
+          <button class="colored"><a href="/">Back</a></button>
           <button class="colored"><a href="/logout">Logout</a></button>
           <button class="colored"><a href="/changePassword">Change Password</a></button>
           <button class="colored"><a href="/myHoldings">My Holdings</a></button>
-          <button class="colored"><a href="/transactions">Transactions</a></button>
           <img src="https://api.dicebear.com/5.x/identicon/svg?seed={{profileSeed}}" alt="profile" width="30" height="30" class="profilePic">
         </nav>
         <br>
       <div class="vcoinCorner">
         <h4><img src="static/vcoin.webp" width="25px"> Balance:- ₹{{vcoins}} </h4>
       </div>
+      <br>
       <div class="u-clearfix u-sheet u-sheet-1">
-
-        <br>
-
-        <br>
         <br>
 
             {{body|safe}}
@@ -137,8 +134,8 @@
 
   .vcoinCorner{
             position:absolute;
-            top: 17%;
-            right: 28%;
+            top: 245px;
+            right: 120px;
             }
 }
 
