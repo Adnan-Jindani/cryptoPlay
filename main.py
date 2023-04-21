@@ -11,30 +11,21 @@ import smtplib
 import requests
 from bs4 import BeautifulSoup
 from flask_caching import Cache
-import os
 
-try:
+# Configure the properties file to get the DB credentials
 
-  # Configure the properties file to get the DB credentials
+configs = Properties()
+with open('allCreds/DBCreds.properties', 'rb') as config_file:
+    configs.load(config_file)
 
-  configs = Properties()
-  with open('allCreds/DBCreds.properties', 'rb') as config_file:
-      configs.load(config_file)
+# Getting DB crdentials from the properties file
 
-  # Getting DB crdentials from the properties file
+global dbHost, dbUser, dbPassword, dbSchema
 
-  global dbHost, dbUser, dbPassword, dbSchema
-
-  dbHost = configs.get("dbHost").data
-  dbUser = configs.get("dbUser").data
-  dbPassword = configs.get("dbPassword").data
-  dbSchema = configs.get("dbSchema").data
-except:
-
-  dbHost = os.getenv("dbHost")
-  dbUser = os.getenv("dbUser")
-  dbPassword = os.getenv("dbPassword")
-  dbSchema = os.getenv("dbSchema")
+dbHost = configs.get("dbHost").data
+dbUser = configs.get("dbUser").data
+dbPassword = configs.get("dbPassword").data
+dbSchema = configs.get("dbSchema").data
 
 global mydb, conn, mycursor
 
@@ -61,24 +52,18 @@ default_app = firebase_admin.initialize_app(cred_obj, {'databaseURL':"https://vi
 global ref
 ref = db.reference("/")
 
-try:
+# Configure the properties file to get the SMTP credentials
 
-  # Configure the properties file to get the SMTP credentials
+smtp_configs = Properties()
+with open('allCreds/smtpCreds.properties', 'rb') as smtp_config_file:
+    smtp_configs.load(smtp_config_file)
 
-  smtp_configs = Properties()
-  with open('allCreds/smtpCreds.properties', 'rb') as smtp_config_file:
-      smtp_configs.load(smtp_config_file)
+# Getting DB crdentials from the properties file
 
-  # Getting DB crdentials from the properties file
+global smtpEmail, smtpPassword
 
-  global smtpEmail, smtpPassword
-
-  smtpEmail = smtp_configs.get("smtpEmail").data
-  smtpPassword = smtp_configs.get("smtpPassword").data
-
-except:
-  smtpEmail = os.getenv("smtpEmail")
-  smtpPassword = os.getenv("smtpPassword")
+smtpEmail = smtp_configs.get("smtpEmail").data
+smtpPassword = smtp_configs.get("smtpPassword").data
 
 #Logging into SMTP for emailing
 
