@@ -61,18 +61,24 @@ default_app = firebase_admin.initialize_app(cred_obj, {'databaseURL':"https://vi
 global ref
 ref = db.reference("/")
 
-# Configure the properties file to get the SMTP credentials
+try:
 
-smtp_configs = Properties()
-with open('allCreds/smtpCreds.properties', 'rb') as smtp_config_file:
-    smtp_configs.load(smtp_config_file)
+  # Configure the properties file to get the SMTP credentials
 
-# Getting DB crdentials from the properties file
+  smtp_configs = Properties()
+  with open('allCreds/smtpCreds.properties', 'rb') as smtp_config_file:
+      smtp_configs.load(smtp_config_file)
 
-global smtpEmail, smtpPassword
+  # Getting DB crdentials from the properties file
 
-smtpEmail = smtp_configs.get("smtpEmail").data
-smtpPassword = smtp_configs.get("smtpPassword").data
+  global smtpEmail, smtpPassword
+
+  smtpEmail = smtp_configs.get("smtpEmail").data
+  smtpPassword = smtp_configs.get("smtpPassword").data
+
+except:
+  smtpEmail = os.getenv("smtpEmail")
+  smtpPassword = os.getenv("smtpPassword")
 
 #Logging into SMTP for emailing
 
