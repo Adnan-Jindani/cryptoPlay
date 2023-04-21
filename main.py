@@ -11,6 +11,7 @@ import smtplib
 import requests
 from bs4 import BeautifulSoup
 from flask_caching import Cache
+import os
 
 # Configure the properties file to get the DB credentials
 
@@ -22,10 +23,17 @@ with open('allCreds/DBCreds.properties', 'rb') as config_file:
 
 global dbHost, dbUser, dbPassword, dbSchema
 
-dbHost = configs.get("dbHost").data
-dbUser = configs.get("dbUser").data
-dbPassword = configs.get("dbPassword").data
-dbSchema = configs.get("dbSchema").data
+try:
+
+  dbHost = configs.get("dbHost").data
+  dbUser = configs.get("dbUser").data
+  dbPassword = configs.get("dbPassword").data
+  dbSchema = configs.get("dbSchema").data
+except:
+  dbHost = os.getenv("dbHost")
+  dbUser = os.getenv("dbUser")
+  dbPassword = os.getenv("dbPassword")
+  dbSchema = os.getenv("dbSchema")
 
 global mydb, conn, mycursor
 
