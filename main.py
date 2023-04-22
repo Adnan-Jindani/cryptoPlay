@@ -294,7 +294,7 @@ def verifyEmail():
     session["pin"] = generatePin()
 
     try:
-      s.sendmail(smtpEmail, session["createEmail"], "Subject: Email Verification pin for Virtual Crypto \n\n Your Virtual Crypto pin is: " + str(session["pin"]) + "\n\n If you did not request this pin, please ignore this email. \n\n Thank you for using Virtual Crypto! \n\n - Virtual Crypto Team \n\n Visit Virtual Crypto at https://todofylive/")
+      s.sendmail(smtpEmail, session["createEmail"], "Subject: Email Verification pin for CryptoPlay \n\n Your CryptoPlay pin is: " + str(session["pin"]) + "\n\n If you did not request this pin, please ignore this email. \n\n Thank you for using CryptoPlay! \n\n - CryptoPlay Team \n\n Visit CryptoPlay at https://todofylive/")
     
     except:
       #Logging into SMTP for emailing
@@ -303,7 +303,7 @@ def verifyEmail():
       s.starttls()
       s.login(smtpEmail, smtpPassword)
 
-      s.sendmail(smtpEmail, session["createEmail"], "Subject: Email Verification pin for Virtual Crypto \n\n Your Virtual Crypto pin is: " + str(session["pin"]) + "\n\n If you did not request this pin, please ignore this email. \n\n Thank you for using Virtual Crypto! \n\n - Virtual Crypto Team \n\n Visit Virtual Crypto at https://todofylive/")
+      s.sendmail(smtpEmail, session["createEmail"], "Subject: Email Verification pin for CryptoPlay \n\n Your CryptoPlay pin is: " + str(session["pin"]) + "\n\n If you did not request this pin, please ignore this email. \n\n Thank you for using CryptoPlay! \n\n - CryptoPlay Team \n\n Visit CryptoPlay at https://todofylive/")
 
     session["emailFlag"] = 0
   
