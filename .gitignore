@@ -1,3 +1,4 @@
 /flask_session
 allCreds/DBCreds.properties
 allCreds/smtpCreds.properties
+firebase.json
