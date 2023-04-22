@@ -1,4 +1,3 @@
 /flask_session
-/allCreds
 allCreds/DBCreds.properties
 allCreds/smtpCreds.properties

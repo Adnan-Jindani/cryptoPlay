@@ -29,25 +29,49 @@ dbSchema = configs.get("dbSchema").data
 
 global mydb, conn, mycursor
 
-# Connecting to MySQL DB
+try:
 
-mydb = pooling.MySQLConnectionPool(
-        pool_name="my_pool",
-        pool_size=32,
-        host=dbHost,
-        user=dbUser,
-        password=dbPassword,
-        database=dbSchema
-    )
+  # Connecting to MySQL DB
 
-conn = mydb.get_connection()
-mycursor = conn.cursor()
+  mydb = pooling.MySQLConnectionPool(
+          pool_name="my_pool",
+          pool_size=32,
+          host=dbHost,
+          user=dbUser,
+          password=dbPassword,
+          database=dbSchema
+      )
 
+  conn = mydb.get_connection()
+  mycursor = conn.cursor()
+
+except:
+  print("Error connecting to DB, Please check the allCreds/DBCreds.properties file")
+  print("Make sure the DB is running and the credentials are correct")
+  print("Exiting the program")
+  exit()
+
+  # Configure the properties file to get the SMTP credentials
+
+firebase_configs = Properties()
+with open('allCreds/firebaseCreds.properties', 'rb') as firebase_config_file:
+    firebase_configs.load(firebase_config_file)
 
 #preparing credentials and logging into firebase databse to set and get the data
 
-cred_obj = firebase_admin.credentials.Certificate('virtual-crypto-1cfa5-firebase-adminsdk-uwgpx-e9d125f3d5.json')
-default_app = firebase_admin.initialize_app(cred_obj, {'databaseURL':"https://virtual-crypto-1cfa5-default-rtdb.firebaseio.com/"})
+global firebaseFile, dbURL
+
+firebaseFile = firebase_configs.get("firebaseFile").data
+dbURL = firebase_configs.get("dbURL").data
+
+try:
+  cred_obj = firebase_admin.credentials.Certificate(firebaseFile)
+  default_app = firebase_admin.initialize_app(cred_obj, {'databaseURL':dbURL})
+except:
+  print("Error connecting to Firebase, Please check the allCreds/firebaseCreds.properties file")
+  print("Make sure the firebaseFile is correct and the credentials are correct")
+  print("Exiting the program")
+  exit()
 
 global ref
 ref = db.reference("/")
@@ -65,11 +89,19 @@ global smtpEmail, smtpPassword
 smtpEmail = smtp_configs.get("smtpEmail").data
 smtpPassword = smtp_configs.get("smtpPassword").data
 
-#Logging into SMTP for emailing
+try:
 
-s = smtplib.SMTP("smtp.gmail.com", 587)
-s.starttls()
-s.login(smtpEmail, smtpPassword)
+  #Logging into SMTP for emailing
+
+  s = smtplib.SMTP("smtp.gmail.com", 587)
+  s.starttls()
+  s.login(smtpEmail, smtpPassword)
+
+except:
+  print("Error connecting to SMTP, Please check the allCreds/smtpCreds.properties file")
+  print("Make sure the SMTP is running and the credentials are correct")
+  print("Exiting the program")
+  exit()
 
 #Initializing the flask app
 
@@ -504,4 +536,4 @@ def getCoinNameFromId(coinId):
   
 
 #running the app on server
-app.run(host='0.0.0.0', port=3000)
+app.run(host='0.0.0.0')
