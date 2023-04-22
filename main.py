@@ -11,6 +11,7 @@ import smtplib
 import requests
 from bs4 import BeautifulSoup
 from flask_caching import Cache
+import hashlib
 
 # Configure the properties file to get the DB credentials
 
@@ -141,6 +142,8 @@ def index():
 
        # getting the password from user input on the login page
        session["password"] = request.form.get("password")
+       session["password"] = hashlib.sha256(session["password"].encode())
+       session["password"] = session["password"].hexdigest()
        print(session["password"])
 
        if session["freshEmail"] != "" and session["password"] != "":
@@ -239,6 +242,8 @@ def signup():
       session["firebaseCreateEmail"] = firebaseCreateEmail
       session["createEmail"] = createEmail
       session["createPassword"] = createPassword
+      session["createPassword"] = hashlib.sha256(session["createPassword"].encode())
+      session["createPassword"] = session["createPassword"].hexdigest()
 
       checkAccount = ref.child("Users/" + firebaseCreateEmail).get()
 
