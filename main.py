@@ -317,12 +317,17 @@ def verifyEmail():
 
         mycursor = conn.cursor()
 
-        sql = "INSERT INTO balances (username, balance) VALUES (%s, %s)"
-        val = (session["createEmail"], 1000000)
+        try:
 
-        mycursor.execute(sql, val)
+          sql = "INSERT INTO balances (username, balance) VALUES (%s, %s)"
+          val = (session["createEmail"], 1000000)
 
-        conn.commit()
+          mycursor.execute(sql, val)
+
+          conn.commit()
+
+        except:
+          return redirect("/verifyEmail#refreshModal")
 
         return redirect("signup#accountCreatedModal")
       else:
