@@ -200,7 +200,7 @@ def myHoldings():
          FROM holdings\
          JOIN coins\
          ON holdings.coin_id = coins.id\
-        WHERE holdings.username = " + "'" + session["email"] + "'"
+        WHERE holdings.username = " + "'" + session["email"] + "' and holdings.coin_amount > 0"
 
   mycursor.execute(sql)
   tasks = mycursor.fetchall()
