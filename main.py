@@ -534,7 +534,7 @@ def transactions():
     else:
       body += "<div class='card' style='color:red'> <h3> You sold " + str(transaction[4]) + " " + coin + " for ₹" + str(transaction[2]) + " </h3> </div> <br><br>"
 
-  return render_template("transactions.html", transactions=transactions, body=body)
+  return render_template("transactions.html", transactions=transactions, body=body, vcoins=session["vcoins"], profileSeed=session["email"].split("@")[0])
 
 def getCoinNameFromId(coinId):
   mycursor = conn.cursor()
