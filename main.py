@@ -543,7 +543,28 @@ def getCoinNameFromId(coinId):
   coin = mycursor.fetchone()
 
   return coin[1]
+
+@app.route('/leaderboard')
+def leaderboard():
+  mycursor = conn.cursor()
+  sql = "SELECT * FROM balances ORDER BY balance DESC LIMIT 10"
+  mycursor.execute(sql)
+  balances = mycursor.fetchall()
+
+  body = ""
+
+  for balance in balances:
+    body += "<div class='card'> <h3> " + str(obfuscate_email(balance[1])) + " - ₹" + str(balance[2]) + " </h3> </div> <br><br>"
+
+  return render_template("leaderboard.html", body=body, vcoins=session["vcoins"], profileSeed=session["email"].split("@")[0])
   
+def obfuscate_email(email):
+    parts = email.split('@')
+    username = parts[0]
+    domain = parts[1]
+    obfuscated = username[0] + '*'*(len(username)-2) + username[-1] + '@' + domain
+    return obfuscated
+
 
 #running the app on server
 app.run(host='0.0.0.0')
