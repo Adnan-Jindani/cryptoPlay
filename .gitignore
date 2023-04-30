@@ -2,3 +2,5 @@
 allCreds/DBCreds.properties
 allCreds/smtpCreds.properties
 firebase.json
+allCreds/config.properties
+allCreds/firebaseCreds.properties
