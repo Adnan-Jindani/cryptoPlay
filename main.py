@@ -566,5 +566,20 @@ def obfuscate_email(email):
     return obfuscated
 
 
-#running the app on server
-app.run(host='0.0.0.0')
+# Configure the properties file to get the DB credentials
+
+configs = Properties()
+with open('allCreds/DBCreds.properties', 'rb') as config_file:
+    configs.load(config_file)
+
+# Getting DB crdentials from the properties file
+
+global production
+
+production = configs.get("production").data
+
+if production == "true":
+  pass
+else:
+  #running the app on server
+  app.run(host='0.0.0.0')
