@@ -5,3 +5,4 @@ Flask_Caching==2.0.2
 jproperties==2.1.1
 mysql-connector-python==8.0.33
 Requests==2.29.0
+Flask-Session==0.4.1
