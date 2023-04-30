@@ -578,7 +578,7 @@ global production
 
 production = configs.get("production").data
 
-if production == "true":
+if production == "true" or production == "True":
   pass
 else:
   #running the app on server
