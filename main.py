@@ -116,7 +116,6 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
-@cache.cached(timeout=300)
 @app.route('/', methods = ["GET", "POST"])
 def index():
 
@@ -190,7 +189,6 @@ def user():
   return render_template("user.html", vcoins = session["vcoins"], tasks=tasks, body=body, profileSeed=session["email"].split("@")[0])
 
 
-@cache.cached(timeout=300)
 @app.route('/myHoldings', methods = ["GET", "POST"])
 def myHoldings(): 
 
