@@ -569,7 +569,7 @@ def obfuscate_email(email):
 # Configure the properties file to get the DB credentials
 
 configs = Properties()
-with open('allCreds/DBCreds.properties', 'rb') as config_file:
+with open('allCreds/config.properties', 'rb') as config_file:
     configs.load(config_file)
 
 # Getting DB crdentials from the properties file
