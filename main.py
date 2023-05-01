@@ -10,7 +10,6 @@ from flask_session import Session
 import smtplib
 import requests
 from bs4 import BeautifulSoup
-from flask_caching import Cache
 import hashlib
 
 # Configure the properties file to get the DB credentials
@@ -107,8 +106,6 @@ except:
 #Initializing the flask app
 
 app = Flask(__name__)
-cache = Cache(config={'CACHE_TYPE': 'SimpleCache'})
-cache.init_app(app)
 
 # Initializing flask Sessions
 
@@ -381,7 +378,6 @@ def sell(id):
 
   return render_template("sell.html", coinInit=coinInit, vcoins=session["vcoins"], url_for=url_for, coinPrice=coinPrice, coinName=coinName, coinId=coinId, coinBal=coinBal)
 
-@cache.cached(timeout=300)
 def getCoinPrice(coinName):
 
   url = "https://www.coingecko.com/en/coins/"+ coinName.lower() +"/inr"
@@ -399,7 +395,6 @@ def getCoinPrice(coinName):
 
   return price
 
-@cache.cached(timeout=300)
 def getCoinPriceFromId(coinId):
 
   mycursor = conn.cursor()
