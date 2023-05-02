@@ -181,7 +181,19 @@ def user():
 
   body=""
   for k in tasks:
-    body += "<div class='card'> <img src='"+ k[3] +"'> <h3>"+ k[1]+" ("+ k[2] +") </h3> <a href=/buy/"+ str(k[0]) +"> <button class='buy'> Buy </button> </a> <a href=/sell/"+ str(k[0]) +"> <button class='sell'> Sell </button> </a> </div> <br> <br>"  
+    body += (
+        "<div class='card'> <img src='"
+        + k[3]
+        + "'> <h3>"
+        + k[1]
+        + " ("
+        + k[2]
+        + ") </h3> <a href=/buy/"
+        + str(k[0])
+        + "> <button class='buy'> Buy </button> </a> <a href=/sell/"
+        + str(k[0])
+        + "> <button class='sell'> Sell </button> </a> </div> <br> <br>"
+    )
 
   return render_template("user.html", vcoins = session["vcoins"], tasks=tasks, body=body, profileSeed=session["email"].split("@")[0])
 
@@ -287,6 +299,7 @@ def verifyEmail():
   if session["emailFlag"] == 1:
 
     session["pin"] = generatePin()
+    session["tries"] = 0
 
     try:
       s.sendmail(smtpEmail, session["createEmail"], "Subject: Email Verification pin for CryptoPlay \n\n Your CryptoPlay pin is: " + str(session["pin"]) + "\n\n If you did not request this pin, please ignore this email. \n\n Thank you for using CryptoPlay! \n\n - CryptoPlay Team \n\n Visit CryptoPlay at https://cryptoplay.aaj227.repl.co/")
@@ -304,6 +317,8 @@ def verifyEmail():
   
   if request.method == "POST":
     pin = request.form.get("pin")
+    if session["tries"] > 4:
+      return redirect("/verifyEmail#tooManyTriesModal")
 
     if pin != None:
    
@@ -323,9 +338,10 @@ def verifyEmail():
 
         except:
           return redirect("/verifyEmail#refreshModal")
-
+        session["tries"] = 0
         return redirect("signup#accountCreatedModal")
       else:
+        session["tries"] = session["tries"] + 1
         return redirect("/verifyEmail#incorrectPinModal")
 
   return render_template("verifyEmail.html")
