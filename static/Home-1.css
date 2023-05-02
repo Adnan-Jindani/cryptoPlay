@@ -1,5 +1,9 @@
  .u-section-1 {
-  background-image: none;
+  background-image: linear-gradient(#DFEFFF, #DDFFEE);
+  background-image: -moz-linear-gradient(#DFEFFF, #DDFFEE);
+  background-image: -webkit-linear-gradient(#DFEFFF, #DDFFEE);
+  background-image: -o-linear-gradient(#DFEFFF, #DDFFEE);
+  background: #DFEFFF
 }
 
 .u-section-1 .u-sheet-1 {
