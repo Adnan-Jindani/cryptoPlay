@@ -11,6 +11,7 @@ import smtplib
 import requests
 from bs4 import BeautifulSoup
 import hashlib
+import cfscrape
 
 # Configure the properties file to get the DB credentials
 
@@ -396,15 +397,17 @@ def sell(id):
 
 def getCoinPrice(coinName):
 
-  url = "https://www.coingecko.com/en/coins/"+ coinName.lower() +"/inr"
+  url = "https://www.coingecko.com/en/coins/" + coinName.lower() + "/inr"
+  scraper = cfscrape.create_scraper()
 
-  response = requests.get(url)
+  response = scraper.get(url, headers={'User-Agent': 'Mozilla/5.0'})
   soup = BeautifulSoup(response.content, "html.parser")
-
   price = soup.find("span", class_="no-wrap").get_text()
 
   price = price.replace(",", "")
   price = price.replace("₹", "")
+  price = float(price)
+  price = round(price, 2)
   
   price = float(price)
   price = round(price, 2)
@@ -420,16 +423,18 @@ def getCoinPriceFromId(coinId):
 
   coinName = coin[1]
 
-  url = "https://www.coingecko.com/en/coins/"+ coinName.lower() +"/inr"
+  url = "https://www.coingecko.com/en/coins/" + coinName.lower() + "/inr"
+  scraper = cfscrape.create_scraper()
 
-  response = requests.get(url)
+  response = scraper.get(url, headers={'User-Agent': 'Mozilla/5.0'})
   soup = BeautifulSoup(response.content, "html.parser")
-
   price = soup.find("span", class_="no-wrap").get_text()
 
   price = price.replace(",", "")
   price = price.replace("₹", "")
-
+  price = float(price)
+  price = round(price, 2)
+  
   price = float(price)
   price = round(price, 2)
 
