@@ -16,6 +16,21 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `audit_trail`
+--
+
+DROP TABLE IF EXISTS `audit_trail`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `audit_trail` (
+  `audit_id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `username` varchar(100) DEFAULT NULL,
+  `action` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`audit_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `balances`
 --
 
@@ -69,7 +84,7 @@ CREATE TABLE `holdings` (
   `coin_id` bigint(20) DEFAULT NULL,
   `coin_amount` decimal(65,10) DEFAULT NULL,
   PRIMARY KEY (`holding_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=43 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=44 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 
@@ -89,7 +104,7 @@ CREATE TABLE `transactions` (
   `coin_amount` varchar(100) DEFAULT NULL,
   `transaction_type` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`transaction_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=76 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=106 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -105,4 +120,4 @@ CREATE TABLE `transactions` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-04-22 18:47:29
+-- Dump completed on 2023-05-03 22:30:02

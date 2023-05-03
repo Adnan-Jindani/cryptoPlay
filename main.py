@@ -157,6 +157,7 @@ def index():
         # A condition to check if the user is an Employee
         if DBpasswordUser == session["password"]:
           session["userType"] = "user"
+          insertIntoAuditTrail(session["email"], "Login")
           return user()
         
         # A condition to tell if the credentials entered are invalid
@@ -231,6 +232,7 @@ def myHoldings():
 
 @app.route('/logout', methods = ["GET", "POST"])
 def logout():
+  insertIntoAuditTrail(session["email"], "Logout")
   session.clear()
   return redirect(url_for("index"))
 
@@ -290,6 +292,7 @@ def changePassword():
   if oldPassword and newPassword != None:
     if oldPassword == DBpasswordUser:
       ref.child("Users/" + session["freshEmail"]).set(newPassword)
+      insertIntoAuditTrail(session["email"], "Password Changed")
       return redirect("/changePassword#successModal")
         
     else:
@@ -345,6 +348,7 @@ def verifyEmail():
         except:
           return redirect("/verifyEmail#refreshModal")
         session["tries"] = 0
+        insertIntoAuditTrail(session["createEmail"], "Signup")
         return redirect("signup#accountCreatedModal")
       else:
         session["tries"] = session["tries"] + 1
@@ -487,6 +491,8 @@ def buyOrder(id, inrVal):
     mycursor.execute(sql)
     conn.commit()
 
+    insertIntoAuditTrail(session["email"], "Buy")
+
     return redirect("/buy/" + id + "#successModal")
 
 @app.route('/sellOrder/<id>/<coinAmt>', methods = ["GET", "POST"])
@@ -515,6 +521,8 @@ def sellOrder(id, coinAmt):
     sql = "insert into transactions (transaction_id, username, value, coin_id, coin_amount, transaction_type) Values (default, '"+ session["email"] +"', "+ str(session["coinVal"]) +", "+ id +", "+ coinAmt +", 'sell')"
     mycursor.execute(sql)
     conn.commit()
+
+    insertIntoAuditTrail(session["email"], "Sell")
 
     return redirect("/sell/" + id + "#successModal")
 
@@ -586,6 +594,13 @@ def obfuscate_email(email):
     obfuscated = username[0] + '*'*(len(username)-2) + username[-1] + '@' + domain
     return obfuscated
 
+# Audit trail function
+
+def insertIntoAuditTrail(username, action):
+  mycursor = conn.cursor()
+  sql = "insert into audit_trail (audit_id, username, action) Values (default, '"+ username +"', '"+ action +"')"
+  mycursor.execute(sql)
+  conn.commit()
 
 # Configure the properties file to get the DB credentials
 
@@ -600,7 +615,10 @@ global production
 production = configs.get("production").data
 
 if production == "true" or production == "True":
+  
+  #running the app on server
   app.run(host='0.0.0.0', port=443, ssl_context=('cert.pem', 'private.key'))
 else:
+
   #running the app on server
   app.run(host='0.0.0.0')
