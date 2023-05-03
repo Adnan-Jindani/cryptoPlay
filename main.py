@@ -593,7 +593,7 @@ global production
 production = configs.get("production").data
 
 if production == "true" or production == "True":
-  pass
+  app.run(host='0.0.0.0', port=443, ssl_context=('cert.pem', 'private.key'))
 else:
   #running the app on server
   app.run(host='0.0.0.0')
