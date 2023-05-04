@@ -597,10 +597,26 @@ def obfuscate_email(email):
 # Audit trail function
 
 def insertIntoAuditTrail(username, action):
-  mycursor = conn.cursor()
-  sql = "insert into audit_trail (audit_id, username, action) Values (default, '"+ username +"', '"+ action +"')"
-  mycursor.execute(sql)
-  conn.commit()
+  try:
+    mycursor = conn.cursor()
+    sql = "insert into audit_trail (audit_id, username, action) Values (default, '"+ username +"', '"+ action +"')"
+    mycursor.execute(sql)
+    conn.commit()
+  except:
+    mydb = pooling.MySQLConnectionPool(
+          pool_name="my_pool",
+          pool_size=32,
+          host=dbHost,
+          user=dbUser,
+          password=dbPassword,
+          database=dbSchema
+      )
+
+    conn = mydb.get_connection()
+    mycursor = conn.cursor()
+    sql = "insert into audit_trail (audit_id, username, action) Values (default, '"+ username +"', '"+ action +"')"
+    mycursor.execute(sql)
+    conn.commit()
 
 # Configure the properties file to get the DB credentials
 
