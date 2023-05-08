@@ -406,23 +406,16 @@ def sell(id):
 
 @cache.cached(timeout=300)
 def getCoinPrice(coinName):
-
-  url = "https://www.coingecko.com/en/coins/" + coinName.lower() + "/inr"
-  scraper = cfscrape.create_scraper()
-
-  response = scraper.get(url, headers={'User-Agent': 'Mozilla/5.0'})
-  soup = BeautifulSoup(response.content, "html.parser")
-  price = soup.find("span", class_="no-wrap").get_text()
-
-  price = price.replace(",", "")
-  price = price.replace("₹", "")
-  price = float(price)
-  price = round(price, 2)
-  
-  price = float(price)
-  price = round(price, 2)
-
-  return price
+    url = f"https://api.coingecko.com/api/v3/simple/price?ids={coinName}&vs_currencies=inr"
+    headers = {'User-Agent': 'Mozilla/5.0'}
+    response = requests.get(url, headers=headers)
+    data = response.json()
+    print(data)
+    price = data[coinName.lower()]['inr']
+    
+    price = float(price)
+    price = round(price, 2)
+    return price
 
 @cache.cached(timeout=300)
 def getCoinPriceFromId(coinId):
@@ -434,18 +427,13 @@ def getCoinPriceFromId(coinId):
 
   coinName = coin[1]
 
-  url = "https://www.coingecko.com/en/coins/" + coinName.lower() + "/inr"
-  scraper = cfscrape.create_scraper()
+  url = f"https://api.coingecko.com/api/v3/simple/price?ids={coinName}&vs_currencies=inr"
+  headers = {'User-Agent': 'Mozilla/5.0'}
+  response = requests.get(url, headers=headers)
+  data = response.json()
+  print(data)
+  price = data[coinName.lower()]['inr']
 
-  response = scraper.get(url, headers={'User-Agent': 'Mozilla/5.0'})
-  soup = BeautifulSoup(response.content, "html.parser")
-  price = soup.find("span", class_="no-wrap").get_text()
-
-  price = price.replace(",", "")
-  price = price.replace("₹", "")
-  price = float(price)
-  price = round(price, 2)
-  
   price = float(price)
   price = round(price, 2)
 
