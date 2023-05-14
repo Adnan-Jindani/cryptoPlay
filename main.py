@@ -286,7 +286,13 @@ def accountExistsSignup():
 @app.route('/changePassword', methods = ["GET", "POST"])
 def changePassword():
   oldPassword = request.form.get("oldPassword")
+  if oldPassword != None:
+    oldPassword = hashlib.sha256(oldPassword.encode())
+    oldPassword = oldPassword.hexdigest()
   newPassword = request.form.get("newPassword")
+  if newPassword != None:
+    newPassword = hashlib.sha256(newPassword.encode())
+    newPassword = newPassword.hexdigest()
   DBpasswordUser = ref.child("Users/" + session["freshEmail"]).get()
 
   if oldPassword and newPassword != None:
