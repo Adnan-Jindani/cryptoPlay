@@ -267,6 +267,7 @@ def signup():
           if checkAccount == None or checkAccount == "":
 
             session["emailFlag"] = 1
+            insertIntoAuditTrail(session["createEmail"], "Verify Email")
             return redirect(url_for("verifyEmail"))
 
           else:
@@ -333,6 +334,7 @@ def verifyEmail():
   if request.method == "POST":
     pin = request.form.get("pin")
     if session["tries"] > 4:
+      insertIntoAuditTrail(session["createEmail"], "Too Many Tries")
       return redirect("/verifyEmail#tooManyTriesModal")
 
     if pin != None:
