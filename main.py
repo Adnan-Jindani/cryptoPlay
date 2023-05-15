@@ -9,9 +9,7 @@ from jproperties import Properties
 from flask_session import Session
 import smtplib
 import requests
-from bs4 import BeautifulSoup
 import hashlib
-import cfscrape
 from flask_caching import Cache
 
 # Configure the properties file to get the DB credentials
@@ -267,6 +265,7 @@ def signup():
           if checkAccount == None or checkAccount == "":
 
             session["emailFlag"] = 1
+            insertIntoAuditTrail(session["createEmail"], "Verify Email")
             return redirect(url_for("verifyEmail"))
 
           else:
@@ -286,7 +285,13 @@ def accountExistsSignup():
 @app.route('/changePassword', methods = ["GET", "POST"])
 def changePassword():
   oldPassword = request.form.get("oldPassword")
+  if oldPassword != None:
+    oldPassword = hashlib.sha256(oldPassword.encode())
+    oldPassword = oldPassword.hexdigest()
   newPassword = request.form.get("newPassword")
+  if newPassword != None:
+    newPassword = hashlib.sha256(newPassword.encode())
+    newPassword = newPassword.hexdigest()
   DBpasswordUser = ref.child("Users/" + session["freshEmail"]).get()
 
   if oldPassword and newPassword != None:
@@ -327,6 +332,7 @@ def verifyEmail():
   if request.method == "POST":
     pin = request.form.get("pin")
     if session["tries"] > 4:
+      insertIntoAuditTrail(session["createEmail"], "Too Many Tries")
       return redirect("/verifyEmail#tooManyTriesModal")
 
     if pin != None:
