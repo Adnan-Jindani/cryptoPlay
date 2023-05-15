@@ -9,9 +9,7 @@ from jproperties import Properties
 from flask_session import Session
 import smtplib
 import requests
-from bs4 import BeautifulSoup
 import hashlib
-import cfscrape
 from flask_caching import Cache
 
 # Configure the properties file to get the DB credentials
