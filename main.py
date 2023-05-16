@@ -44,6 +44,10 @@ try:
 
   conn = mydb.get_connection()
   mycursor = conn.cursor()
+  mycursor.execute("SET SESSION wait_timeout = 86400")  # Set the wait_timeout to 24 hours (86400 seconds)
+  mycursor.execute("SET SESSION interactive_timeout = 86400")  # Set the interactive_timeout to 24 hours (86400 seconds)
+  conn.commit()
+  mycursor.close()
 
 except:
   print("Error connecting to DB, Please check the allCreds/DBCreds.properties file")
