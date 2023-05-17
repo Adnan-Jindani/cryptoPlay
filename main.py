@@ -168,11 +168,30 @@ def index():
   # This funtion is for the user
 
 def user(): 
+  # Using the global variables
+  global conn, mycursor
 
-  mycursor = conn.cursor()
-  sql = "SELECT balance from balances where username = " + "'" + session["email"] + "'"
-  mycursor.execute(sql)
-  vcoins = mycursor.fetchone()
+  # Try and except block to handle DB connection timeout
+  try:
+    mycursor = conn.cursor()
+    sql = "SELECT balance from balances where username = " + "'" + session["email"] + "'"
+    mycursor.execute(sql)
+    vcoins = mycursor.fetchone()
+  except:
+    # Connecting to MySQL DB
+
+    mydb = pooling.MySQLConnectionPool(
+            pool_name="my_pool",
+            pool_size=32,
+            host=dbHost,
+            user=dbUser,
+            password=dbPassword,
+            database=dbSchema
+        )
+
+    conn = mydb.get_connection()
+    mycursor = conn.cursor()
+    
   try:
     session["vcoins"] = vcoins[0]
   except:
