@@ -208,7 +208,7 @@ def user():
     body += (
         "<div class='card'> <img src='"
         + k[3]
-        + "'> <h3>"
+        + "' height=50 width=50> <h3>"
         + k[1]
         + " ("
         + k[2]
