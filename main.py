@@ -117,7 +117,7 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
-@app.route('/', methods = ["GET", "POST"])
+@app.route('/login', methods = ["GET", "POST"])
 def index():
 
   try:
@@ -630,6 +630,10 @@ def insertIntoAuditTrail(username, action):
     sql = "insert into audit_trail (audit_id, username, action) Values (default, '"+ username +"', '"+ action +"')"
     mycursor.execute(sql)
     conn.commit()
+
+@app.route('/', methods = ["GET", "POST"])
+def visiting():
+  return render_template("visiting.html")
 
 # Configure the properties file to get the DB credentials
 
